@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Babysitting Tracker</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:#f5f6fa;color:#2d3748;min-width:560px;max-width:680px;margin:0 auto;padding:20px 20px 30px}
+.header{text-align:center;margin-bottom:20px}
+.header h1{font-size:21px;font-weight:700;color:#1a202c;letter-spacing:-0.3px}
+.header p{font-size:12px;color:#a0aec0;margin-top:3px}
+.month-nav{display:flex;align-items:center;justify-content:center;gap:14px;margin-bottom:14px}
+.nav-btn{background:#fff;border:1.5px solid #e2e8f0;border-radius:9px;width:34px;height:34px;cursor:pointer;font-size:18px;display:flex;align-items:center;justify-content:center;transition:all .15s;color:#4a5568;line-height:1}
+.nav-btn:hover{background:#edf2f7;border-color:#cbd5e0}
+.month-label{font-size:17px;font-weight:700;color:#1a202c;min-width:190px;text-align:center}
+.legend{display:flex;gap:18px;justify-content:center;margin-bottom:14px;flex-wrap:wrap}
+.leg{display:flex;align-items:center;gap:7px;font-size:12px;color:#4a5568;font-weight:500}
+.leg-dot{width:13px;height:13px;border-radius:50%;flex-shrink:0}
+.leg-dot.boy{background:#4A8EE8}
+.leg-dot.girl{background:#F06BA0}
+.leg-dot.both{background:linear-gradient(to right,#4A8EE8 50%,#F06BA0 50%)}
+.calendar{background:#fff;border-radius:18px;box-shadow:0 2px 16px rgba(0,0,0,.09);overflow:hidden;margin-bottom:18px}
+.cal-head{display:grid;grid-template-columns:repeat(7,1fr);background:#f9fafb;border-bottom:1px solid #edf2f7}
+.cal-head div{padding:9px 0;text-align:center;font-size:11px;font-weight:700;color:#a0aec0;letter-spacing:.6px;text-transform:uppercase}
+.cal-grid{display:grid;grid-template-columns:repeat(7,1fr)}
+.day{display:flex;flex-direction:column;align-items:center;justify-content:center;border-right:1px solid #f3f4f6;border-bottom:1px solid #f3f4f6;cursor:pointer;padding:5px 3px 6px;transition:background .15s;min-height:82px;user-select:none;position:relative}
+.day:nth-child(7n){border-right:none}
+.day:hover:not(.empty){background:#fafbff}
+.day.empty{cursor:default;background:#fafbff}
+.circle{width:44px;height:44px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;overflow:hidden;transition:all .2s;flex-shrink:0}
+.circle.none{background:transparent;color:#4a5568}
+.circle.boy{background:#4A8EE8;color:#fff;box-shadow:0 2px 8px rgba(74,142,232,.4)}
+.circle.girl{background:#F06BA0;color:#fff;box-shadow:0 2px 8px rgba(240,107,160,.4)}
+.circle.both{background:linear-gradient(to right,#4A8EE8 50%,#F06BA0 50%);color:#fff;box-shadow:0 2px 8px rgba(0,0,0,.18)}
+.today-circle{background:#1a202c;color:#fff;border-radius:50%;width:26px;height:26px;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700}
+.hrs-wrap{margin-top:4px;width:100%;display:flex;align-items:center;justify-content:center;gap:2px}
+.hrs-input{width:38px;padding:2px 3px;border:1.5px solid #e2e8f0;border-radius:7px;font-size:11px;text-align:center;color:#2d3748;font-weight:600;background:#f8faff;outline:none;transition:border .15s}
+.hrs-input:focus{border-color:#4A8EE8}
+.hrs-lbl{font-size:10px;color:#a0aec0;font-weight:500}
+.both-hrs{margin-top:5px;width:100%;display:flex;flex-direction:column;gap:3px;align-items:center}
+.both-row{display:flex;align-items:center;gap:3px}
+.kid-dot{width:7px;height:7px;border-radius:50%;flex-shrink:0}
+.kid-dot.b{background:#4A8EE8}
+.kid-dot.g{background:#F06BA0}
+.both-input{width:36px;padding:2px 3px;border:1.5px solid #e2e8f0;border-radius:7px;font-size:10px;text-align:center;color:#2d3748;font-weight:600;background:#f8faff;outline:none;transition:border .15s}
+.both-input.bi:focus{border-color:#4A8EE8}
+.both-input.gi:focus{border-color:#F06BA0}
+.both-lbl{font-size:9.5px;color:#a0aec0;font-weight:500}
+.clear-btn{margin-top:3px;font-size:9px;color:#cbd5e0;background:none;border:none;cursor:pointer;padding:1px 4px;border-radius:5px;font-weight:600;transition:color .15s}
+.clear-btn:hover{color:#e53e3e}
+.section-title{font-size:15px;font-weight:700;color:#1a202c;margin-bottom:12px;display:flex;align-items:center;gap:6px}
+.period-block{background:#fff;border-radius:16px;box-shadow:0 2px 10px rgba(0,0,0,.07);padding:16px 18px;margin-bottom:12px}
+.period-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;padding-bottom:10px;border-bottom:1px solid #f3f4f6}
+.period-name{font-size:13px;font-weight:700;color:#1a202c}
+.period-payday{font-size:11px;color:#a0aec0;font-weight:500;background:#f7f8fa;padding:3px 9px;border-radius:20px}
+.period-rows{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px}
+.fam-row{display:flex;justify-content:space-between;align-items:center}
+.fam-label{display:flex;align-items:center;gap:6px;font-size:12.5px;color:#4a5568;font-weight:500}
+.fam-dot{width:9px;height:9px;border-radius:50%;flex-shrink:0}
+.fam-amt{font-size:15px;font-weight:800;color:#1a202c}
+.period-sub{font-size:11px;color:#a0aec0;margin-top:3px}
+.period-divider{height:1px;background:#f3f4f6;margin:10px 0}
+.period-owed{display:flex;justify-content:space-between;align-items:center;font-size:12.5px;color:#718096}
+.period-owed strong{color:#2d3748;font-size:13.5px;font-weight:800}
+.actual-row{display:flex;align-items:center;gap:10px;margin-top:11px;padding-top:11px;border-top:1px solid #f3f4f6}
+.actual-label{font-size:12px;font-weight:600;color:#4a5568;flex:1}
+.actual-input-wrap{display:flex;align-items:center;gap:4px}
+.dollar-sign{font-size:14px;font-weight:700;color:#a0aec0}
+.actual-input{width:80px;padding:5px 8px;border:1.5px solid #e2e8f0;border-radius:9px;font-size:13px;font-weight:700;text-align:right;color:#1a202c;background:#f9fafb;outline:none;transition:border .15s}
+.actual-input:focus{border-color:#4A8EE8}
+.diff-badge{font-size:11px;font-weight:700;padding:2px 8px;border-radius:20px;white-space:nowrap}
+.diff-badge.over{background:#e6f9f0;color:#22863a}
+.diff-badge.under{background:#fef0f0;color:#e53e3e}
+.diff-badge.exact{background:#edf2f7;color:#718096}
+.tax-section{background:#fff;border-radius:16px;box-shadow:0 2px 10px rgba(0,0,0,.07);padding:16px 18px;margin-bottom:14px}
+.tax-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;padding-bottom:10px;border-bottom:1px solid #f3f4f6}
+.tax-rate-badge{font-size:11px;background:#fff8e6;color:#b7791f;font-weight:700;padding:3px 10px;border-radius:20px;border:1px solid #f6e05e}
+.tax-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px}
+.tax-card{background:#f9fafb;border-radius:11px;padding:11px 12px;text-align:center}
+.tax-card-label{font-size:10.5px;color:#a0aec0;font-weight:600;text-transform:uppercase;letter-spacing:.4px;margin-bottom:5px}
+.tax-card-amt{font-size:17px;font-weight:800;color:#1a202c}
+.tax-card.highlight{background:#fff8e6;border:1.5px solid #f6e05e}
+.tax-card.highlight .tax-card-amt{color:#b7791f}
+.tax-note{font-size:11px;color:#a0aec0;text-align:center;margin-top:10px}
+.month-total{background:#1a202c;border-radius:14px;padding:13px 16px;display:flex;justify-content:space-between;align-items:center;margin-bottom:14px}
+.month-total-label{color:#a0aec0;font-size:13px;font-weight:600}
+.month-total-amt{color:#fff;font-size:18px;font-weight:800}
+.export-btn{width:100%;padding:13px;background:linear-gradient(135deg,#4A8EE8,#7C5CBF);color:#fff;border:none;border-radius:12px;font-size:14px;font-weight:700;cursor:pointer;transition:opacity .15s;letter-spacing:.2px;display:flex;align-items:center;justify-content:center;gap:8px}
+.export-btn:hover{opacity:.9}
+.note{text-align:center;font-size:11px;color:#c3cad5;margin-top:8px}
+</style>
+</head>
+<body>
+<div class="header">
+  <h1>🌸 Babysitting Tracker</h1>
+  <p>Click a day to assign · Enter hours · See exactly what each family owes</p>
+</div>
+<div class="month-nav">
+  <button class="nav-btn" id="prev">&#8249;</button>
+  <div class="month-label" id="monthLabel"></div>
+  <button class="nav-btn" id="next">&#8250;</button>
+</div>
+<div class="legend">
+  <div class="leg"><div class="leg-dot boy"></div>Boy only — $22/hr</div>
+  <div class="leg"><div class="leg-dot girl"></div>Girl only — $22/hr</div>
+  <div class="leg"><div class="leg-dot both"></div>Both — overlap $15/ea, extra $22</div>
+</div>
+<div class="calendar">
+  <div class="cal-head">
+    <div>Sun</div><div>Mon</div><div>Tue</div><div>Wed</div><div>Thu</div><div>Fri</div><div>Sat</div>
+  </div>
+  <div class="cal-grid" id="calGrid"></div>
+</div>
+<div id="paySummary"></div>
+<button class="export-btn" id="exportBtn">⬇️ &nbsp;Export Pay Summary</button>
+<div class="note">Data saves automatically · Works as Chrome extension or standalone page</div>
+<script src="popup.js"></script>
+</body>
+</html>
